@@ -8,7 +8,7 @@ MONGO_URI = "mongodb+srv://museomagazzino:artwork@cluster0.kedecnn.mongodb.net/?
 client = MongoClient(MONGO_URI)
 db = client["MuseoMagazzino"]
 artworks_collection = db["artworks"]
-iot_collection = db["artworks_tracking"]
+iot_collection = db["iot-data"]
 
 app = FastAPI(title="Museo Smart System API")
 
