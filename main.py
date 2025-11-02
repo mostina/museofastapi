@@ -62,6 +62,12 @@ def delete_artwork(artwork_id: str):
 # 🌡️ ENDPOINT IoT (dal simulatore)
 # ==========================
 
+@app.get("/iot-data")
+def get_iot_data():
+    """Ritorna tutti i dati IoT presenti nel database."""
+    data = list(iot_collection.find({}, {"_id": 0}))  # esclude l'_id ObjectId generato da MongoDB
+    return {"count": len(data), "iot_data": data}
+
 @app.post("/iot-data/update")
 def update_iot_data(data: IoTData):
     """Riceve aggiornamenti IoT e aggiorna il database."""
