@@ -43,9 +43,20 @@ class IoTData(BaseModel):
 
 @app.get("/artworks")
 def get_all_artworks():
-    """Ritorna tutte le opere nel database."""
-    data = list(artworks_collection.find({}, {"_id": 0}))
-    return {"count": len(data), "artworks": data}
+    data = list(artworks_collection.find({}))
+    # mappa _id ObjectId in stringa
+    artworks = []
+    for item in data:
+        artworks.append({
+            "id": str(item["_id"]),
+            "nome": item["nome"],
+            "autore": item["autore"],
+            "anno": item["anno"],
+            "in_prestito": item["in_prestito"],
+            "in_magazzino": item["in_magazzino"]
+        })
+    return {"count": len(artworks), "artworks": artworks}
+
 
 @app.post("/artworks/add")
 def add_artwork(artwork: ArtWork):
