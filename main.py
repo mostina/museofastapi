@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from pymongo import MongoClient
 from datetime import datetime
+import os
+import uvicorn
 
 # ✅ Connessione a MongoDB Atlas
 MONGO_URI = "mongodb+srv://museomagazzino:artwork@cluster0.kedecnn.mongodb.net/?appName=Cluster0"
@@ -102,8 +104,8 @@ def root():
 # ==========================
 # 🏁 START SERVER
 # ==========================
+
+
 if __name__ == "__main__":
-    import os
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
+    port = int(os.environ.get("PORT", 10000))  # fallback su 10000 se non definita
     uvicorn.run("main:app", host="0.0.0.0", port=port)
