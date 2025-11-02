@@ -70,23 +70,26 @@ def get_iot_data():
 
 @app.post("/iot-data/update")
 def update_iot_data(data: IoTData):
-    """Riceve aggiornamenti IoT e aggiorna il database."""
+    """Aggiorna sempre i dati IoT per ogni opera."""
+    print("📡 Ricevuti dati IoT:", data.dict())  # log per debug
+
     artwork = artworks_collection.find_one({"_id": data._id})
 
-    # Se l’opera non esiste, ignoriamo l’update
     if not artwork:
-        raise HTTPException(status_code=404, detail="Opera non trovata")
+        raise HTTPException(status_code=404, detail=f"Opera {data._id} non trovata")
 
-    # Se l’opera NON è in magazzino, aggiorniamo i dati IoT
-    if not artwork["in_magazzino"]:
+    try:
+        # Aggiorna o inserisci sempre i dati IoT
         iot_collection.update_one(
             {"_id": data._id},
             {"$set": data.dict()},
             upsert=True
         )
         return {"message": f"Dati IoT aggiornati per {data._id}"}
-    else:
-        return {"message": f"L’opera {data._id} è in magazzino — GPS non aggiornato."}
+    except Exception as e:
+        print("❌ Errore durante l'update IoT:", e)
+        raise HTTPException(status_code=500, detail="Errore interno durante l'update IoT")
+
 
 # ==========================
 # 🧠 TEST ROUTE
