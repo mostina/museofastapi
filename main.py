@@ -27,12 +27,15 @@ class ArtWork(BaseModel):
     in_magazzino: bool
 
 class IoTData(BaseModel):
-    _id: str
+    id: str  # usiamo id interno e lo aliasiamo a _id
     latitude: float
     longitude: float
     temperature: float
     humidity: float
     timestamp: str
+
+    class Config:
+        fields = {"id": "_id"}
 
 # ==========================
 # 🏛️ ENDPOINT OPERE D’ARTE
@@ -75,19 +78,19 @@ def update_iot_data(data: IoTData):
     """Aggiorna sempre i dati IoT per ogni opera."""
     print("📡 Ricevuti dati IoT:", data.dict())  # log per debug
 
-    artwork = artworks_collection.find_one({"_id": data._id})
+    artwork = artworks_collection.find_one({"_id": data.id})
 
     if not artwork:
-        raise HTTPException(status_code=404, detail=f"Opera {data._id} non trovata")
+        raise HTTPException(status_code=404, detail=f"Opera {data.id} non trovata")
 
     try:
         # Aggiorna o inserisci sempre i dati IoT
         iot_collection.update_one(
-            {"_id": data._id},
-            {"$set": data.dict()},
+            {"_id": data.id},
+            {"$set": data.dict(by_alias=True)},
             upsert=True
         )
-        return {"message": f"Dati IoT aggiornati per {data._id}"}
+        return {"message": f"Dati IoT aggiornati per {data.id}"}
     except Exception as e:
         print("❌ Errore durante l'update IoT:", e)
         raise HTTPException(status_code=500, detail="Errore interno durante l'update IoT")
@@ -105,7 +108,6 @@ def root():
 # 🏁 START SERVER
 # ==========================
 
-
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))  # fallback su 10000 se non definita
+    port = int(os.environ["PORT"])  # Render definisce sempre PORT
     uvicorn.run("main:app", host="0.0.0.0", port=port)
