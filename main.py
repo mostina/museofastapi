@@ -25,6 +25,7 @@ class ArtWork(BaseModel):
     anno: int
     in_prestito: bool
     in_magazzino: bool
+    prestato_a: str
 
 class IoTData(BaseModel):
     id: str  # usiamo id interno e lo aliasiamo a _id
@@ -53,7 +54,8 @@ def get_all_artworks():
             "autore": item["autore"],
             "anno": item["anno"],
             "in_prestito": item["in_prestito"],
-            "in_magazzino": item["in_magazzino"]
+            "in_magazzino": item["in_magazzino"],
+            "prestato_a":item["prestato_a"]
         })
     return {"count": len(artworks), "artworks": artworks}
 
