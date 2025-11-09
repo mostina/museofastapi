@@ -127,5 +127,5 @@ def root():
 # ==========================
 
 if __name__ == "__main__":
-    port = int(os.environ["PORT"])  # that is for render
+    port = int(os.environ.get("PORT", 8000))  # that is for render
     uvicorn.run("main:app", host="0.0.0.0", port=port)
